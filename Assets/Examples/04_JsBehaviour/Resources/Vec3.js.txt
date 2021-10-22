@@ -1,0 +1,30 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Vec3 = void 0;
+class Vec3 {
+    x;
+    y;
+    z;
+    constructor(x = 0, y = 0, z = 0) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+    clone() {
+        return new Vec3(this.x, this.y, this.z);
+    }
+    multiplyScalar(value) {
+        this.x *= value;
+        this.y *= value;
+        this.z *= value;
+        return this;
+    }
+    add(other) {
+        this.x += other.x;
+        this.y += other.y;
+        this.z += other.z;
+        return this;
+    }
+}
+exports.Vec3 = Vec3;
+//# sourceMappingURL=Vec3.js.map

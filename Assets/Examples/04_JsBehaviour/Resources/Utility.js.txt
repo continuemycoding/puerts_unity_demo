@@ -1,0 +1,58 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Utility = void 0;
+const csharp_1 = require("csharp");
+const { Vec3 } = require('Vec3');
+class Utility {
+    /**
+     * @param points 控制点，点的个数代表贝塞尔曲线的阶数
+     * @param t 0到1的时间值
+     */
+    // https://en.wikipedia.org/wiki/B%C3%A9zier_curve
+    // https://www.jasondavies.com/animated-bezier/
+    static getBezierLerpPoint(points, t) {
+        const n = points.length;
+        const factors = [1];
+        for (let i = 2; i < n + 1; i++) {
+            let last = factors.slice(0);
+            factors[0] = 1;
+            factors[i - 1] = 1;
+            for (let i = 0; i < last.length - 1; i++) {
+                factors[i + 1] = last[i] + last[i + 1];
+            }
+        }
+        let p = new Vec3();
+        for (let i = 0; i < n; i++) {
+            let value = factors[i] * Math.pow(1 - t, n - 1 - i) * Math.pow(t, i);
+            p.add(points[i].clone().multiplyScalar(value));
+        }
+        return p;
+    }
+    /**
+     * @param points 控制点，点的个数代表贝塞尔曲线的阶数
+     * @param amount 曲线的点数量，数值越大，得到的曲线越平滑
+     */
+    static getBezierPoints(points, amount) {
+        const curve = [];
+        for (let i = 0; i < amount; i++) {
+            curve.push(Utility.getBezierLerpPoint(points, i / (amount - 1)));
+        }
+        return curve;
+    }
+    static update(transform) {
+        const array = [];
+        for (let i = 0; i < transform.childCount; i++) {
+            const child = transform.GetChild(i);
+            csharp_1.UnityEngine.Rect;
+            array.push(new Vec3(child.position.x, child.position.y, child.position.z));
+        }
+        const result = Utility.getBezierPoints(array, 200);
+        for (let i = 0; i < result.length - 1; i++) {
+            const start = new csharp_1.UnityEngine.Vector3(result[i].x, result[i].y, result[i].z);
+            const end = new csharp_1.UnityEngine.Vector3(result[i + 1].x, result[i + 1].y, result[i + 1].z);
+            csharp_1.UnityEngine.Debug.DrawLine(start, end, csharp_1.UnityEngine.Color.red);
+        }
+    }
+}
+exports.Utility = Utility;
+//# sourceMappingURL=Utility.js.map
